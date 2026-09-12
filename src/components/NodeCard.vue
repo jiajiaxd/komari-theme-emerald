@@ -143,21 +143,18 @@ function openPingDialog() {
 
           <!-- 流量进度条 -->
           <div class="flex flex-col gap-1">
-            <div class="w-full text-xs flex flex-wrap items-center justify-between gap-x-2">
-              <span class="text-muted-foreground">
+            <div class="w-full text-xs flex items-center justify-between gap-x-2">
+              <span class="shrink-0 text-muted-foreground">
                 流量
               </span>
-              <span class="flex flex-wrap justify-end gap-x-1 text-[11px]">
-                <span class="text-foreground">↑ {{ formatBytes(props.node.net_total_up ?? 0) }}</span>
-                <span class="text-foreground">↓ {{ formatBytes(props.node.net_total_down ?? 0) }}</span>
-              </span>
+              <span class="truncate text-[11px] text-muted-foreground">{{ formatBytes(trafficUsed) }}</span>
             </div>
             <TrafficProgress
               :upload="props.node.net_total_up ?? 0" :download="props.node.net_total_down ?? 0"
             />
             <DataTooltip placement="top" class="block">
-              <div class="whitespace-pre-wrap text-[11px] text-muted-foreground truncate">
-                {{ formatBytes(trafficUsed) }}
+              <div class="text-[11px] text-foreground truncate">
+                ↑ {{ formatBytes(props.node.net_total_up ?? 0) }} ↓ {{ formatBytes(props.node.net_total_down ?? 0) }}
               </div>
               <template #content>
                 <div class="flex items-center justify-between gap-3 whitespace-nowrap">
