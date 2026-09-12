@@ -149,13 +149,13 @@ function openPingDialog() {
               <span class="shrink-0 text-muted-foreground">
                 流量
               </span>
-              <span class="truncate text-[11px] text-muted-foreground">{{ formatBytes(trafficUsed) }}</span>
+              <span class="truncate text-foreground">{{ formatBytes(trafficUsed) }}</span>
             </div>
             <TrafficProgress
               :upload="props.node.net_total_up ?? 0" :download="props.node.net_total_down ?? 0"
             />
             <DataTooltip placement="top" class="block">
-              <div class="text-[11px] text-foreground truncate">
+              <div class="text-[11px] text-muted-foreground truncate">
                 ↑ {{ formatBytes(props.node.net_total_up ?? 0) }} ↓ {{ formatBytes(props.node.net_total_down ?? 0) }}
               </div>
               <template #content>
