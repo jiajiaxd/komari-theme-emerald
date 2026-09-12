@@ -197,7 +197,7 @@ function getRowTransitionStyle(index: number): Record<string, string> {
                   >
                   <span class="truncate">{{ node.name }}</span>
                 </div>
-                <div class="flex flex-row text-[11px] text-muted-foreground/70">
+                <div class="flex min-w-0 flex-wrap text-[11px] text-muted-foreground/70">
                   <DataTooltip
                     v-if="node.online" :content="formatUptime(node.uptime ?? 0)" class="shrink-0" placement="right"
                     content-class="whitespace-pre-wrap left-0 ml-0 w-max"
@@ -207,11 +207,11 @@ function getRowTransitionStyle(index: number): Record<string, string> {
                     </span>
                   </DataTooltip>
                   <DataTooltip
-                    v-if="getPriceTags(node, appStore.lang).length > 0" placement="left"
+                    v-if="getPriceTags(node, appStore.lang).length > 0" class="min-w-0" placement="left"
                     :content="formatDateTime(node.expired_at, 'YYYY-MM-DD')"
                     content-class="whitespace-nowrap right-0 mr-0"
                   >
-                    <div class="truncate">
+                    <div class="flex flex-wrap">
                       <template v-for="(tag, tagIndex) in getPriceTags(node, appStore.lang)" :key="tagIndex">
                         <span class="mx-1">·</span>
                         <span :class="tag.highlight ? getRemainingTimeTagClass(node) : ''">
@@ -319,31 +319,24 @@ function getRowTransitionStyle(index: number): Record<string, string> {
               <div v-else-if="col.key === 'traffic'" class="group">
                 <DataTooltip placement="top" class="flex items-center gap-2" content-class="mb-1.5">
                   <div class="space-y-1 w-full">
-                    <div class="text-[10px] text-muted-foreground truncate">
-                      <span class="inline group-hover:hidden">
-                        {{ getTrafficUsedPercentage(node).toFixed(1) }}%
-                      </span>
-                      <span class="hidden group-hover:inline">
-                        {{ formatBytes(getTrafficUsed(node)) }} /
-                        <template v-if="showTrafficProgress(node)">{{ formatBytes(node.traffic_limit) }}</template>
-                        <template v-else>∞</template>
-                      </span>
+                    <div class="flex flex-col text-[10px]">
+                      <span class="text-yellow-600 dark:text-yellow-400">↑ {{ formatBytes(node.net_total_up ?? 0) }}</span>
+                      <span class="text-green-600 dark:text-green-400">↓ {{ formatBytes(node.net_total_down ?? 0) }}</span>
                     </div>
                     <TrafficProgress
                       :upload="node.net_total_up ?? 0" :download="node.net_total_down ?? 0"
-                      :traffic-limit="node.traffic_limit" :traffic-limit-type="(node.traffic_limit_type || 'sum')"
+                      :traffic-limit="node.traffic_limit"
                       height="4px"
                     />
                   </div>
                   <template #content>
-                    <span class="flex flex-row gap-0.5 items-center whitespace-nowrap">
-                      <Icon icon="tabler:chevron-up" width="12" height="12" />
-                      {{ formatBytes(node.net_total_up ?? 0) }}
-                    </span>
-                    <span class="flex flex-row gap-0.5 items-center whitespace-nowrap">
-                      <Icon icon="tabler:chevron-down" width="12" height="12" />
-                      {{ formatBytes(node.net_total_down ?? 0) }}
-                    </span>
+                    {{ formatBytes(getTrafficUsed(node)) }} /
+                    <template v-if="showTrafficProgress(node)">
+                      {{ formatBytes(node.traffic_limit) }}
+                    </template>
+                    <template v-else>
+                      ∞
+                    </template>
                   </template>
                 </DataTooltip>
               </div>

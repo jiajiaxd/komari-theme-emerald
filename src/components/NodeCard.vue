@@ -2,6 +2,7 @@
 import type { NodeData } from '@/stores/nodes'
 import { Icon } from '@iconify/vue'
 import { computed } from 'vue'
+import TrafficProgress from '@/components/TrafficProgress.vue'
 import { Badge } from '@/components/ui/badge'
 import { CardX } from '@/components/ui/card-x'
 import { DataTooltip } from '@/components/ui/data-tooltip'
@@ -11,7 +12,7 @@ import { useNodeFormatters } from '@/composables/useNodeFormatters'
 import { useNodePingDisplay } from '@/composables/useNodePingDisplay'
 import { useAppStore } from '@/stores/app'
 import { formatDateTime, getStatus } from '@/utils/helper'
-import { getCustomTags, getDiskPercentage, getMemPercentage, getPriceTags, getRemainingTimeTagClass, getTrafficUsed, getTrafficUsedPercentage, hasRegion, showTrafficProgress } from '@/utils/nodeHelpers'
+import { getCustomTags, getDiskPercentage, getMemPercentage, getPriceTags, getRemainingTimeTagClass, getTrafficUsed, hasRegion, showTrafficProgress } from '@/utils/nodeHelpers'
 import { getOSImage, getOSName } from '@/utils/osImageHelper'
 import { getFlagSrc, getRegionDisplayName } from '@/utils/regionHelper'
 
@@ -45,7 +46,6 @@ const {
   topPingNetworks,
 } = useNodePingDisplay(() => props.node.uuid)
 
-const trafficUsedPercentage = computed(() => getTrafficUsedPercentage(props.node))
 const trafficUsed = computed(() => getTrafficUsed(props.node))
 const priceTags = computed(() => getPriceTags(props.node, appStore.lang))
 const remainingTimeTagClass = computed(() => getRemainingTimeTagClass(props.node))
@@ -143,13 +143,19 @@ function openPingDialog() {
 
           <!-- 流量进度条 -->
           <div class="flex flex-col gap-1">
-            <div class="w-full text-xs flex flex-row justify-between">
+            <div class="w-full text-xs flex flex-wrap items-center justify-between gap-x-2">
               <span class="text-muted-foreground">
                 流量
               </span>
-              <span>{{ trafficUsedPercentage.toFixed(1) }}%</span>
+              <span class="flex flex-wrap justify-end gap-x-2">
+                <span class="text-yellow-600 dark:text-yellow-400">↑ {{ formatBytes(props.node.net_total_up ?? 0) }}</span>
+                <span class="text-green-600 dark:text-green-400">↓ {{ formatBytes(props.node.net_total_down ?? 0) }}</span>
+              </span>
             </div>
-            <ProgressThin :percentage="trafficUsedPercentage" status="success" :height="4" />
+            <TrafficProgress
+              :upload="props.node.net_total_up ?? 0" :download="props.node.net_total_down ?? 0"
+              :traffic-limit="props.node.traffic_limit"
+            />
             <DataTooltip placement="top" class="block">
               <div class="whitespace-pre-wrap text-[11px] text-muted-foreground truncate">
                 {{ formatBytes(trafficUsed) }} /
@@ -216,8 +222,8 @@ function openPingDialog() {
                 费用
               </span>
               <div class="border-t-2 border-dotted border-gray-500/10 mx-2 flex-1" />
-              <DataTooltip placement="left" :content="expiredDate" content-class="whitespace-nowrap right-0 mr-0">
-                <span class="truncate flex flex-row gap-1">
+              <DataTooltip class="min-w-0" placement="left" :content="expiredDate" content-class="whitespace-nowrap right-0 mr-0">
+                <span class="flex flex-wrap justify-end gap-1">
                   <template v-for="(tag, index) in priceTags" :key="tag.text">
                     <span class="inline-flex flex-row gap-1 items-center">
                       <span :class="tag.highlight ? remainingTimeTagClass : ''">{{ tag.text }}</span>

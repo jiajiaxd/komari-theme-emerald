@@ -1,4 +1,5 @@
 import type { NodeData, TrafficLimitType } from '@/stores/nodes'
+import { calculateRemainingValue, formatFinanceAmount, normalizeCurrency } from '@/utils/financeHelper'
 import { formatDateTime } from '@/utils/helper'
 import { formatPriceWithCycle, getDaysUntilExpired, getExpireStatus, getExpireTextClass, parseTags } from '@/utils/tagHelper'
 
@@ -51,6 +52,8 @@ export function getPriceTags(node: NodeData, lang: 'zh-CN' | 'en-US'): PriceTagI
     tags.push({ text: `${days >= 0 ? '+' : ''}${days}天`, highlight: true })
   else
     tags.push({ text: `${days >= 0 ? '+' : ''}${days}d`, highlight: true })
+  const remaining = formatFinanceAmount(calculateRemainingValue(node), normalizeCurrency(node.currency))
+  tags.push({ text: `${lang === 'zh-CN' ? '剩余价值' : 'Remaining value'} ${remaining.symbol}${remaining.value} ${remaining.currency}` })
   return tags
 }
 

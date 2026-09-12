@@ -3,6 +3,7 @@ import type { CurrencyCode } from '@/utils/financeHelper'
 import { Icon } from '@iconify/vue'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import TrafficProgress from '@/components/TrafficProgress.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardX } from '@/components/ui/card-x'
@@ -202,24 +203,12 @@ const trafficUsed = computed(() => {
 
 const hasTrafficLimit = computed(() => (data.value?.traffic_limit ?? 0) > 0)
 
-const trafficUsedPercentage = computed(() => {
-  const trafficLimit = data.value?.traffic_limit ?? 0
-  if (trafficLimit <= 0)
-    return 0
-
-  return Math.min((trafficUsed.value / trafficLimit) * 100, 100)
-})
-
 const trafficUsageText = computed(() => {
   if (!hasTrafficLimit.value)
     return '无限流量'
 
   return `${formatBytes(trafficUsed.value)} / ${formatBytes(data.value?.traffic_limit ?? 0)}`
 })
-
-const trafficProgressStyle = computed(() => ({
-  width: `${trafficUsedPercentage.value}%`,
-}))
 </script>
 
 <template>
@@ -360,19 +349,16 @@ const trafficProgressStyle = computed(() => ({
         >
           <div class="gap-3 grid grid-cols-2">
             <div class="relative min-w-0 overflow-hidden rounded-sm bg-slate-500/5 p-2">
-              <div
-                v-if="hasTrafficLimit"
-                class="absolute inset-y-0 left-0 rounded-sm bg-primary/10 pointer-events-none transition-[width] duration-300 ease-out"
-                :style="trafficProgressStyle"
-              />
               <div class="relative flex flex-col gap-1.5">
                 <div class="flex gap-1 items-center text-muted-foreground">
                   <Icon icon="icon-park-outline:transfer-data" :width="14" :height="14" />
                   <span class="text-xs sm:text-sm">总流量</span>
                   <div class="flex-1" />
-                  <span class="hidden sm:block text-[11px] font-medium text-foreground/70">{{
-                    formatBytes(data?.net_total_up ?? 0) }} / {{ formatBytes(data?.net_total_down ?? 0) }}</span>
                 </div>
+                <TrafficProgress
+                  :upload="data.net_total_up ?? 0" :download="data.net_total_down ?? 0"
+                  :traffic-limit="data.traffic_limit" show-indicator
+                />
                 <span class="text-xs sm:text-sm break-all">
                   {{ trafficUsageText }}
                 </span>
