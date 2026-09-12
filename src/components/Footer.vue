@@ -57,12 +57,19 @@ const showFiling = computed(() => showIcp.value || showPolice.value)
           :content="`v${buildVersion}\n${buildGitHash}`"
         >
           <a
-            href="https://github.com/Tokinx/komari-theme-emerald" target="_blank" rel="noopener noreferrer"
+            href="https://github.com/jiajiaxd/komari-theme-emerald" target="_blank" rel="noopener noreferrer"
             class="transition-opacity hover:opacity-80"
           >
-            <span class="font-medium text-foreground">Komari Emerald</span>
+            <span class="font-medium text-foreground">jiajiaxd</span>
           </a>
         </DataTooltip>
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://github.com/jiajiaxd/komari-theme-emerald/releases/latest"
+          target="_blank" rel="noopener noreferrer" class="transition-opacity hover:opacity-80"
+        >
+          {{ appStore.lang === 'zh-CN' ? '更新' : 'Updates' }}
+        </a>
       </div>
     </div>
 

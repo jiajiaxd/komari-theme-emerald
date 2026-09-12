@@ -1,13 +1,21 @@
 {
   "name": "komari-theme-emerald",
   "type": "module",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "packageManager": "bun@1.3.14",
   "author": {
-    "name": "Tokinx",
-    "url": "https://github.com/Tokinx"
+    "name": "jiajiaxd",
+    "url": "https://github.com/jiajiaxd"
   },
   "license": "MIT",
+  "homepage": "https://github.com/jiajiaxd/komari-theme-emerald",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiajiaxd/komari-theme-emerald.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jiajiaxd/komari-theme-emerald/issues"
+  },
   "engines": {
     "node": "^20.19.0 || >=22.12.0",
     "bun": ">=1.2.0"
