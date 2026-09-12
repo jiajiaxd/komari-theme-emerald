@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { DataTooltip } from '@/components/ui/data-tooltip'
 import { ProgressThin } from '@/components/ui/progress-thin'
 import { useBackgroundSurface } from '@/composables/useBackgroundSurface'
+import { useFinanceRates } from '@/composables/useFinanceRates'
 import { useNodeFormatters } from '@/composables/useNodeFormatters'
 import { useAppStore } from '@/stores/app'
 import { formatDateTime, getStatus } from '@/utils/helper'
@@ -36,6 +37,7 @@ const rowStaggerMs = 35
 const rowStaggerLimit = 12
 
 const appStore = useAppStore()
+const { exchangeRates } = useFinanceRates()
 const { pickSurfaceClass } = useBackgroundSurface()
 const { formatBytes, formatBytesPerSecond, formatUptime } = useNodeFormatters()
 
@@ -207,12 +209,12 @@ function getRowTransitionStyle(index: number): Record<string, string> {
                     </span>
                   </DataTooltip>
                   <DataTooltip
-                    v-if="getPriceTags(node, appStore.lang).length > 0" class="min-w-0" placement="left"
+                    v-if="getPriceTags(node, appStore.lang, exchangeRates).length > 0" class="min-w-0" placement="left"
                     :content="formatDateTime(node.expired_at, 'YYYY-MM-DD')"
                     content-class="whitespace-nowrap right-0 mr-0"
                   >
                     <div class="flex flex-wrap">
-                      <template v-for="(tag, tagIndex) in getPriceTags(node, appStore.lang)" :key="tagIndex">
+                      <template v-for="(tag, tagIndex) in getPriceTags(node, appStore.lang, exchangeRates)" :key="tagIndex">
                         <span class="mx-1">·</span>
                         <span :class="tag.highlight ? getRemainingTimeTagClass(node) : ''">
                           {{ tag.text }}

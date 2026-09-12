@@ -8,6 +8,7 @@ import { CardX } from '@/components/ui/card-x'
 import { DataTooltip } from '@/components/ui/data-tooltip'
 import { ProgressThin } from '@/components/ui/progress-thin'
 import { useBackgroundSurface } from '@/composables/useBackgroundSurface'
+import { useFinanceRates } from '@/composables/useFinanceRates'
 import { useNodeFormatters } from '@/composables/useNodeFormatters'
 import { useNodePingDisplay } from '@/composables/useNodePingDisplay'
 import { useAppStore } from '@/stores/app'
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 }>()
 
 const appStore = useAppStore()
+const { exchangeRates } = useFinanceRates()
 const { pickSurfaceClass } = useBackgroundSurface()
 const { formatBytes, formatBytesPerSecond, formatUptime } = useNodeFormatters()
 
@@ -47,7 +49,7 @@ const {
 } = useNodePingDisplay(() => props.node.uuid)
 
 const trafficUsed = computed(() => getTotalTraffic(props.node))
-const priceTags = computed(() => getPriceTags(props.node, appStore.lang))
+const priceTags = computed(() => getPriceTags(props.node, appStore.lang, exchangeRates.value))
 const remainingTimeTagClass = computed(() => getRemainingTimeTagClass(props.node))
 const customTags = computed(() => getCustomTags(props.node))
 

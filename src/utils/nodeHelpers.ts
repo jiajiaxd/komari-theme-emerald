@@ -1,5 +1,6 @@
 import type { NodeData, TrafficLimitType } from '@/stores/nodes'
-import { calculateRemainingValue, formatFinanceAmount, normalizeCurrency } from '@/utils/financeHelper'
+import type { ExchangeRates } from '@/utils/financeHelper'
+import { calculateRemainingValueCNY, formatFinanceAmount } from '@/utils/financeHelper'
 import { formatDateTime } from '@/utils/helper'
 import { formatPriceWithCycle, getDaysUntilExpired, getExpireStatus, getExpireTextClass, parseTags } from '@/utils/tagHelper'
 
@@ -43,21 +44,28 @@ export function getTrafficUsedPercentage(node: NodeData): number {
   return Math.min((used / node.traffic_limit) * 100, 100)
 }
 
-export function getPriceTags(node: NodeData, lang: 'zh-CN' | 'en-US'): PriceTagItem[] {
+export function getPriceTags(node: NodeData, lang: 'zh-CN' | 'en-US', exchangeRates: ExchangeRates): PriceTagItem[] {
   const tags: PriceTagItem[] = []
   const days = getDaysUntilExpired(node.expired_at)
   const status = getExpireStatus(node.expired_at)
   const priceText = formatPriceWithCycle(node.price, node.billing_cycle, node.currency, lang)
   if (node.price !== 0)
     tags.push({ text: priceText })
-  if (status === 'long_term')
-    tags.push({ text: lang === 'zh-CN' ? '长期' : 'Long-term' })
-  else if (lang === 'zh-CN')
-    tags.push({ text: `${days >= 0 ? '+' : ''}${days}天`, highlight: true })
-  else
-    tags.push({ text: `${days >= 0 ? '+' : ''}${days}d`, highlight: true })
-  const remaining = formatFinanceAmount(calculateRemainingValue(node), normalizeCurrency(node.currency))
-  tags.push({ text: `${lang === 'zh-CN' ? '剩余价值' : 'Remaining value'} ${remaining.symbol}${remaining.value} ${remaining.currency}` })
+  const hasExpiration = Boolean(node.expired_at) && Number.isFinite(new Date(node.expired_at).getTime())
+  if (hasExpiration) {
+    if (status === 'long_term')
+      tags.push({ text: lang === 'zh-CN' ? '长期' : 'Long-term' })
+    else if (lang === 'zh-CN')
+      tags.push({ text: `${days >= 0 ? '+' : ''}${days}天`, highlight: true })
+    else
+      tags.push({ text: `${days >= 0 ? '+' : ''}${days}d`, highlight: true })
+  }
+  const price = Number(node.price)
+  const billingCycle = Number(node.billing_cycle)
+  if (hasExpiration && Number.isFinite(price) && price > 0 && Number.isFinite(billingCycle) && billingCycle > 0) {
+    const remaining = formatFinanceAmount(calculateRemainingValueCNY(node, exchangeRates), 'CNY')
+    tags.push({ text: `${remaining.symbol}${remaining.value}` })
+  }
   return tags
 }
 
