@@ -27,6 +27,10 @@ export function showTrafficProgress(node: NodeData): boolean {
   return node.traffic_limit > 0
 }
 
+export function getTotalTraffic(node: NodeData): number {
+  return (node.net_total_up ?? 0) + (node.net_total_down ?? 0)
+}
+
 export function getTrafficUsed(node: NodeData): number {
   const { net_total_up = 0, net_total_down = 0, traffic_limit_type } = node
   return calculateTrafficUsed(net_total_up, net_total_down, traffic_limit_type)

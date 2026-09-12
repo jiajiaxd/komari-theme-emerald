@@ -14,7 +14,7 @@ import { useAppStore } from '@/stores/app'
 import { useNodesStore } from '@/stores/nodes'
 import * as financeHelper from '@/utils/financeHelper'
 import { formatDateTime } from '@/utils/helper'
-import { getTrafficUsed } from '@/utils/nodeHelpers'
+import { getTotalTraffic } from '@/utils/nodeHelpers'
 import { getOSImage, getOSName } from '@/utils/osImageHelper'
 import { getFlagSrc, getRegionDisplayName } from '@/utils/regionHelper'
 import { getBillingCycleText, getExpireText, getExpireTextClass } from '@/utils/tagHelper'
@@ -198,16 +198,7 @@ const storageInfo = computed<InfoItem[]>(() => [
 const trafficUsed = computed(() => {
   if (!data.value)
     return 0
-  return getTrafficUsed(data.value)
-})
-
-const hasTrafficLimit = computed(() => (data.value?.traffic_limit ?? 0) > 0)
-
-const trafficUsageText = computed(() => {
-  if (!hasTrafficLimit.value)
-    return '无限流量'
-
-  return `${formatBytes(trafficUsed.value)} / ${formatBytes(data.value?.traffic_limit ?? 0)}`
+  return getTotalTraffic(data.value)
 })
 </script>
 
@@ -360,7 +351,7 @@ const trafficUsageText = computed(() => {
                   show-indicator
                 />
                 <span class="text-xs sm:text-sm break-all">
-                  {{ trafficUsageText }}
+                  {{ formatBytes(trafficUsed) }}
                 </span>
               </div>
             </div>

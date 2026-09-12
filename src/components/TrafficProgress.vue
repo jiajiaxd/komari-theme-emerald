@@ -24,9 +24,9 @@ const progressHeight = computed(() => typeof props.height === 'number' ? `${prop
 
 <template>
   <div class="flex w-full min-w-0 flex-col gap-1">
-    <div v-if="showIndicator" class="flex flex-wrap justify-end gap-x-2 text-xs">
-      <span class="text-yellow-600 dark:text-yellow-400">↑ {{ formatBytes(upload) }}</span>
-      <span class="text-green-600 dark:text-green-400">↓ {{ formatBytes(download) }}</span>
+    <div v-if="showIndicator" class="flex flex-wrap justify-end gap-x-1 text-[11px]">
+      <span class="text-foreground">↑ {{ formatBytes(upload) }}</span>
+      <span class="text-foreground">↓ {{ formatBytes(download) }}</span>
     </div>
     <div
       class="flex overflow-hidden rounded-full bg-muted" :style="{ height: progressHeight }"

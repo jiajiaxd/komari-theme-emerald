@@ -11,7 +11,7 @@ import { useBackgroundSurface } from '@/composables/useBackgroundSurface'
 import { useNodeFormatters } from '@/composables/useNodeFormatters'
 import { useAppStore } from '@/stores/app'
 import { formatDateTime, getStatus } from '@/utils/helper'
-import { formatOfflineTime, getCustomTags, getPriceTags, getRemainingTimeTagClass, getTrafficUsed, getTrafficUsedPercentage, hasRegion, showTrafficProgress } from '@/utils/nodeHelpers'
+import { formatOfflineTime, getCustomTags, getPriceTags, getRemainingTimeTagClass, getTotalTraffic, getTrafficUsedPercentage, hasRegion } from '@/utils/nodeHelpers'
 import { getOSImage, getOSName } from '@/utils/osImageHelper'
 import { getFlagSrc, getRegionDisplayName } from '@/utils/regionHelper'
 
@@ -320,8 +320,8 @@ function getRowTransitionStyle(index: number): Record<string, string> {
                 <DataTooltip placement="top" class="flex items-center gap-2" content-class="mb-1.5">
                   <div class="space-y-1 w-full">
                     <div class="flex flex-col text-[10px]">
-                      <span class="text-yellow-600 dark:text-yellow-400">↑ {{ formatBytes(node.net_total_up ?? 0) }}</span>
-                      <span class="text-green-600 dark:text-green-400">↓ {{ formatBytes(node.net_total_down ?? 0) }}</span>
+                      <span class="text-foreground">↑ {{ formatBytes(node.net_total_up ?? 0) }}</span>
+                      <span class="text-foreground">↓ {{ formatBytes(node.net_total_down ?? 0) }}</span>
                     </div>
                     <TrafficProgress
                       :upload="node.net_total_up ?? 0" :download="node.net_total_down ?? 0"
@@ -329,13 +329,7 @@ function getRowTransitionStyle(index: number): Record<string, string> {
                     />
                   </div>
                   <template #content>
-                    {{ formatBytes(getTrafficUsed(node)) }} /
-                    <template v-if="showTrafficProgress(node)">
-                      {{ formatBytes(node.traffic_limit) }}
-                    </template>
-                    <template v-else>
-                      ∞
-                    </template>
+                    {{ formatBytes(getTotalTraffic(node)) }}
                   </template>
                 </DataTooltip>
               </div>

@@ -12,7 +12,7 @@ import { useNodeFormatters } from '@/composables/useNodeFormatters'
 import { useNodePingDisplay } from '@/composables/useNodePingDisplay'
 import { useAppStore } from '@/stores/app'
 import { formatDateTime, getStatus } from '@/utils/helper'
-import { getCustomTags, getDiskPercentage, getMemPercentage, getPriceTags, getRemainingTimeTagClass, getTrafficUsed, hasRegion, showTrafficProgress } from '@/utils/nodeHelpers'
+import { getCustomTags, getDiskPercentage, getMemPercentage, getPriceTags, getRemainingTimeTagClass, getTotalTraffic, hasRegion } from '@/utils/nodeHelpers'
 import { getOSImage, getOSName } from '@/utils/osImageHelper'
 import { getFlagSrc, getRegionDisplayName } from '@/utils/regionHelper'
 
@@ -46,7 +46,7 @@ const {
   topPingNetworks,
 } = useNodePingDisplay(() => props.node.uuid)
 
-const trafficUsed = computed(() => getTrafficUsed(props.node))
+const trafficUsed = computed(() => getTotalTraffic(props.node))
 const priceTags = computed(() => getPriceTags(props.node, appStore.lang))
 const remainingTimeTagClass = computed(() => getRemainingTimeTagClass(props.node))
 const customTags = computed(() => getCustomTags(props.node))
@@ -147,9 +147,9 @@ function openPingDialog() {
               <span class="text-muted-foreground">
                 流量
               </span>
-              <span class="flex flex-wrap justify-end gap-x-2">
-                <span class="text-yellow-600 dark:text-yellow-400">↑ {{ formatBytes(props.node.net_total_up ?? 0) }}</span>
-                <span class="text-green-600 dark:text-green-400">↓ {{ formatBytes(props.node.net_total_down ?? 0) }}</span>
+              <span class="flex flex-wrap justify-end gap-x-1 text-[11px]">
+                <span class="text-foreground">↑ {{ formatBytes(props.node.net_total_up ?? 0) }}</span>
+                <span class="text-foreground">↓ {{ formatBytes(props.node.net_total_down ?? 0) }}</span>
               </span>
             </div>
             <TrafficProgress
@@ -157,13 +157,7 @@ function openPingDialog() {
             />
             <DataTooltip placement="top" class="block">
               <div class="whitespace-pre-wrap text-[11px] text-muted-foreground truncate">
-                {{ formatBytes(trafficUsed) }} /
-                <template v-if="showTrafficProgress(props.node)">
-                  {{ formatBytes(props.node.traffic_limit) }}
-                </template>
-                <template v-else>
-                  ∞
-                </template>
+                {{ formatBytes(trafficUsed) }}
               </div>
               <template #content>
                 <div class="flex items-center justify-between gap-3 whitespace-nowrap">
