@@ -357,7 +357,7 @@ const trafficUsageText = computed(() => {
                 </div>
                 <TrafficProgress
                   :upload="data.net_total_up ?? 0" :download="data.net_total_down ?? 0"
-                  :traffic-limit="data.traffic_limit" show-indicator
+                  show-indicator
                 />
                 <span class="text-xs sm:text-sm break-all">
                   {{ trafficUsageText }}

@@ -5,7 +5,6 @@ import { useNodeFormatters } from '@/composables/useNodeFormatters'
 export interface TrafficProgressProps {
   upload: number
   download: number
-  trafficLimit: number
   height?: number | string
   showIndicator?: boolean
 }
@@ -17,7 +16,7 @@ const props = withDefaults(defineProps<TrafficProgressProps>(), {
 const { formatBytes } = useNodeFormatters()
 const upload = computed(() => Number.isFinite(props.upload) ? Math.max(0, props.upload) : 0)
 const download = computed(() => Number.isFinite(props.download) ? Math.max(0, props.download) : 0)
-const denominator = computed(() => Math.max(upload.value + download.value, props.trafficLimit > 0 ? props.trafficLimit : 0))
+const denominator = computed(() => upload.value + download.value)
 const uploadPercentage = computed(() => denominator.value > 0 ? upload.value / denominator.value * 100 : 0)
 const downloadPercentage = computed(() => denominator.value > 0 ? download.value / denominator.value * 100 : 0)
 const progressHeight = computed(() => typeof props.height === 'number' ? `${props.height}px` : props.height)

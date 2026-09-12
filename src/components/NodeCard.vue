@@ -154,7 +154,6 @@ function openPingDialog() {
             </div>
             <TrafficProgress
               :upload="props.node.net_total_up ?? 0" :download="props.node.net_total_down ?? 0"
-              :traffic-limit="props.node.traffic_limit"
             />
             <DataTooltip placement="top" class="block">
               <div class="whitespace-pre-wrap text-[11px] text-muted-foreground truncate">
